@@ -1,0 +1,36 @@
+SELECT Orders.OrderID, SUM(OrderDetails.Quantity * OrderDetails.UnitPrice) AS TotalPrice
+FROM Orders
+JOIN OrderDetails ON Orders.OrderID = OrderDetails.OrderID
+WHERE OrderDetails.Quantity > 10
+GROUP BY Orders.OrderID;
+
+
+1.- Se puede mejorar la legibilidad de la consulta utilizando un alias para la tabla Orders y OrderDetails.
+2.- Se puede utilizar la función SUM() en la cláusula WHERE para filtrar los resultados esto va a mejora la eficiencia
+ya que como está actualmente se están calculando los productos de todas las ordenes y luego se filtran los resultados.
+3.- el JOIN se puede cambiar por INNER JOIN para mayor claridad.
+4.- Se podría agregar un índice compuesto en la tabla OrderDetails para las columnas OrderID y
+Quantity para mejorar la eficiencia de la consulta.
+
+Consulta con las mejoras aplicadas:
+
+SELECT o.OrderID, SUM(od.TotalItemPrice) AS TotalPrice
+FROM Orders AS o
+INNER JOIN (
+    SELECT OrderID, Quantity * UnitPrice AS TotalItemPrice
+    FROM OrderDetails
+    WHERE Quantity > 10
+) AS od ON o.OrderID = od.OrderID
+GROUP BY o.OrderID;
+
+
+
+
+SELECT CustomerName FROM Customers WHERE City = 'London' ORDER BY CustomerName;
+
+
+1.- Dado que se usa City para hacer un filtro, podríamos agregar un índice en esa columna:
+
+CREATE INDEX idx_customers_city ON Customers(City);
+
+Se podría también un índice compuesto para las columnas City y CustomerName para mejorar la eficiencia de la consulta.
